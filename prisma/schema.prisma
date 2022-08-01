@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+    id    Int  @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    hash String
+    firstName String
+    lastName String?
+    username String @unique
+    email String @unique
+    admin Boolean @default(false)
+
+    counters Counter[]
+    categories Category[]
+    days Day[]
+
+    @@map("users")
+}
+
+model Counter {
+    id    Int  @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    name String
+    description String?
+
+    userId Int
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    categories Category[]
+
+    @@map("counters")
+}
+
+model Category {
+    id    Int  @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    name String
+
+    counters Counter[]
+
+    userId Int
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@map("categories")
+}
